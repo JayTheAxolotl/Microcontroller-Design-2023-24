@@ -28,7 +28,7 @@ wait(200, MSEC)
 print("\033[2J")
 
 #endregion VEXcode Generated Robot Configuration
-Unit = 1.1
+Unit = 1
 
 def Calibrate():
     #Calibrates motors 12, 10, and 20 to look more like the scarab walk cycle.
@@ -38,6 +38,7 @@ def Calibrate():
     pass
 
 def Forward(Degrees):
+    #in general 360 degrees move the bot about 86cm/34in
     motor_2.spin_for(FORWARD, Degrees, DEGREES, wait=False)
     motor_19.spin_for(FORWARD, Degrees, DEGREES, wait=False)
     motor_11.spin_for(FORWARD, Degrees, DEGREES, wait=False)
@@ -55,6 +56,7 @@ def Turn(Degrees):
 
 def when_started1():
     Calibrate()
+    Forward(360)
     
 
 when_started1()
