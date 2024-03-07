@@ -47,6 +47,8 @@ def Forward(Degrees):
     motor_10.spin_for(FORWARD, Degrees, DEGREES)
 
 def Turn(Degrees):
+    #The reason for the (math.fabs(360/Degrees) - 1) * -Degrees formula is so that the motors that don't want to spin 
+    #forward, still get sent to the right angle. Said angle is relative to the motor on the opposite side.
     motor_2.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
     motor_12.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
     motor_11.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
@@ -56,7 +58,8 @@ def Turn(Degrees):
 
 def when_started1():
     Calibrate()
-    Forward(360)
+    wait(500, MSEC)
+    Turn(-135)
     
 
 when_started1()
