@@ -31,11 +31,11 @@ print("\033[2J")
 Unit = 1
 
 def Calibrate():
-    #Calibrates motors 12, 10, and 20 to look more like the scarab walk cycle.
+    #Calibrates motors 12, 10, and 20 to look more like the scarab walk cycle, and to be more stable.
+    #It is reccomended to have a single Calibrate() at the beginning of your code.
     motor_12.spin_for(FORWARD, 90, DEGREES, wait=False)
     motor_10.spin_for(FORWARD, 90, DEGREES, wait=False)
     motor_20.spin_for(FORWARD, 90, DEGREES)
-    pass
 
 def Forward(Degrees):
     #in general 360 degrees move the bot about 86cm/34in
@@ -47,8 +47,8 @@ def Forward(Degrees):
     motor_10.spin_for(FORWARD, Degrees, DEGREES)
 
 def Turn(Degrees):
-    #The reason for the (math.fabs(360/Degrees) - 1) * -Degrees formula is so that the motors that don't want to spin 
-    #forward, still get sent to the right angle. Said angle is relative to the motor on the opposite side.
+    # The reason for the (math.fabs(360/Degrees) - 1) * -Degrees formula is so that the motors are in the right position
+    # The amount the bot spins is not exact to the degrees inputted, also to turn left use a negative input
     motor_2.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
     motor_12.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
     motor_11.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
