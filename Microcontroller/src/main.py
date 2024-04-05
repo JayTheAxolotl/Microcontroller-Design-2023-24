@@ -12,7 +12,13 @@ motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_36_1, True)
 motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_36_1, True)
 motor_2 = Motor(Ports.PORT2, GearSetting.RATIO_36_1, True)
 
-bumper_a = Bumper(brain.three_wire_port.a)
+bumper_b = Bumper(brain.three_wire_port.b)
+
+# Variables
+cycle = 0
+cycleT = cycle
+Unit = 1
+t = int # Temporary variable
 
 
 # wait for rotation sensor to fully initialize
@@ -29,15 +35,15 @@ wait(200, MSEC)
 # clear the console to make sure we don't have the REPL in the console
 print("\033[2J")
 
-#endregion VEXcode Generated Robot Configuration
-Unit = 1
-
 def Calibrate():
     #Calibrates motors 12, 10, and 20 to look more like the scarab walk cycle, and to be more stable.
     #It is reccomended to have a single Calibrate() at the beginning of your code.
     motor_12.spin_for(FORWARD, 90, DEGREES, wait=False)
     motor_10.spin_for(FORWARD, 90, DEGREES, wait=False)
     motor_20.spin_for(FORWARD, 90, DEGREES)
+    motor_19.set_stopping(HOLD)
+    motor_2.set_stopping(HOLD)
+    motor_11.set_stopping(HOLD)
 
 def Forward(Degrees):
     #in general 360 degrees moves the bot about 86cm/34in
@@ -51,19 +57,61 @@ def Forward(Degrees):
 def Turn(Degrees):
     # The reason for the (math.fabs(360/Degrees) - 1) * -Degrees formula is so that the motors are in the right position
     # The amount the bot spins is not exact to the degrees inputted, also to turn left use a negative input
-    motor_2.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
-    motor_12.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
-    motor_11.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
-    motor_20.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
-    motor_19.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
-    motor_10.spin_for(FORWARD, (Degrees * Unit), DEGREES)
-
-def when_started1():
-    #Calibrate()
-    if bumper_a.pressing() == 1:
-        #Forward(100)
-        brain.screen.print("worked")
+    Degrees = Degrees * 2
+    if Degrees > 720:
+        motor_2.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * Degrees), DEGREES, wait=False)
+        motor_12.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * Degrees), DEGREES, wait=False)
+        motor_11.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * Degrees), DEGREES, wait=False)
+        motor_20.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
+        motor_19.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
+        motor_10.spin_for(FORWARD, (Degrees * Unit), DEGREES)
     else:
-        pass
+        motor_2.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
+        motor_12.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
+        motor_11.spin_for(FORWARD, ((math.fabs(360/Degrees) - 1) * -Degrees), DEGREES, wait=False)
+        motor_20.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
+        motor_19.spin_for(FORWARD, (Degrees * Unit), DEGREES, wait=False)
+        motor_10.spin_for(FORWARD, (Degrees * Unit), DEGREES)
 
-when_started1()
+
+def press():
+    global cycle, cycleT
+    sleep(300)
+    cycle += 1
+    if cycle > 4:
+        cycle = 0
+    cycleT = cycle
+
+
+def main():
+    global cycle, cycleT, t
+    Calibrate()
+    bumper_b.pressed(press)
+    while True:
+        sleep(50)
+        if cycleT == 1:
+            cycleT = 0
+            Forward(360)
+            Turn(180)
+            Forward(360)
+        elif cycleT == 2:
+            cycleT = 0
+            Turn(360)
+            Forward(20)
+            Turn(360)
+            Forward(20)
+        elif cycleT == 3:
+            cycleT = 0
+            Turn(1800)
+        elif cycleT == 4:
+            cycleT = 0
+            Forward(100)
+            Turn(90)
+            Forward(100)
+            Turn(90)
+            Forward(100)
+            Turn(90)
+            Forward(100)
+            Turn(90)
+
+run = Thread(main)
